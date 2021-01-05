@@ -5,4 +5,4 @@ Finished Projects:
 1. HEAD for coloring a graph.
 
 Working on:
- P-Center Prolblem.
+1. P-Center Prolblem.
