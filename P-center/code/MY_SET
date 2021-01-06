@@ -1,0 +1,140 @@
+#pragma once
+
+class MY_SET{
+    const int BIT_WIDTH=30;
+public:
+    int size;
+    int volume;
+    int* bit;
+
+public:
+    MY_SET(int volume):volume(volume),size(0),bit(new int[volume/BIT_WIDTH+1])
+    {
+        memset(bit,0,(volume/BIT_WIDTH+1)*sizeof(int));
+    }
+  
+    // 拷贝构造
+    MY_SET(const MY_SET &s):size(s.size),volume(s.volume),bit(new int[volume/BIT_WIDTH+1])
+    {
+        for(int i=0;i<volume/BIT_WIDTH+1;i++)
+            bit[i]=s.bit[i];
+    }
+
+    // 移动构造
+    MY_SET(MY_SET&& s)noexcept:size(s.size),volume(s.volume),bit(s.bit)
+    {
+        s.size=0;
+        s.volume=0;
+        s.bit=NULL;
+    }
+
+    MY_SET& operator=(const MY_SET &s)
+    {
+        if(this==&s) return *this;
+
+        size=s.size;
+        volume=s.volume;
+        if(bit) delete[] bit;
+        bit=new int[volume/BIT_WIDTH+1];
+        for(int i=0;i<volume/BIT_WIDTH+1;i++)
+            bit[i]=s.bit[i];
+
+        return *this;
+    }
+
+    MY_SET& operator=(MY_SET&& s)noexcept
+    {
+        if(this==&s) return *this;
+
+        size=s.size;
+        volume=s.volume;
+        if(bit) delete[] bit;
+        bit=s.bit;
+        s.bit=NULL;
+
+        return *this;
+    }
+
+    ~MY_SET()
+    {
+        if(bit) delete[] bit;
+        bit=NULL;
+    }
+
+    bool insert(int num)
+    {
+        if(num>volume) return false;
+
+        int int_offset=num/BIT_WIDTH;
+        int bit_offset=num%BIT_WIDTH;
+
+        if(!(bit[int_offset]&(1<<bit_offset)))
+        {
+            size++;
+            bit[int_offset]|=(1<<bit_offset);
+        }
+        return true;
+    }
+
+    bool have_elem(int num)
+    {
+        if(num>volume) return false;
+
+        int int_offset=num/BIT_WIDTH;
+        int bit_offset=num%BIT_WIDTH;
+
+        return bit[int_offset]&(1<<bit_offset);
+    }
+
+    bool erase(int num)
+    {
+        if(num>volume) return false;
+
+        int int_offset=num/BIT_WIDTH;
+        int bit_offset=num%BIT_WIDTH;
+
+        if(bit[int_offset]&(1<<bit_offset))
+        {
+            bit[int_offset]&=~(1<<bit_offset);
+            size--;
+            return true;
+        }
+        return false;
+    }
+
+    bool clear()
+    {
+        if(bit)
+        {
+            memset(bit,0,(volume/BIT_WIDTH+1)*sizeof(int));
+            return true;
+        }
+        return false;
+    }
+
+    int get_the_kth(int k)
+    {
+        if(k>size) return -1;
+
+        int cnt=0;
+        for(int int_offset=0;int_offset<volume/BIT_WIDTH+1;int_offset++)
+        {
+            if(!bit[int_offset])
+            {
+                continue;
+            }
+
+            for(int bit_offset=0;bit_offset<BIT_WIDTH;bit_offset++)
+            {
+                if((1<<bit_offset)>bit[int_offset]) break;
+
+                if((1<<bit_offset)&bit[int_offset])
+                {
+                    cnt++;
+                    if(cnt==k) return int_offset*BIT_WIDTH+bit_offset;
+                }
+            }
+        }
+        return -1;
+    }
+};
