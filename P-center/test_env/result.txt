@@ -1,0 +1,147 @@
+        file_path                       status         time
+../data/pmed1.n100p5.txt		right		0s
+../data/pmed10.n200p67.txt		right		0s
+../data/pmed11.n300p5.txt		right		0s
+../data/pmed12.n300p10.txt		right		0s
+../data/pmed13.n300p30.txt		right		0s
+../data/pmed14.n300p60.txt		right		0s
+../data/pmed15.n300p100.txt		right		0s
+../data/pmed1.n100p5.txt		right		0s
+../data/pmed10.n200p67.txt		right		0s
+../data/pmed11.n300p5.txt		right		0s
+../data/pmed12.n300p10.txt		right		0s
+../data/pmed13.n300p30.txt		right		0s
+../data/pmed14.n300p60.txt		right		0s
+../data/pmed15.n300p100.txt		right		0s
+../data/pmed16.n400p5.txt		right		0s
+../data/pmed17.n400p10.txt		right		0s
+../data/pmed18.n400p40.txt		right		0s
+../data/pmed19.n400p80.txt		right		0s
+../data/pmed2.n100p10.txt		right		0s
+../data/pmed20.n400p133.txt		right		0s
+../data/pmed21.n500p5.txt		right		0s
+../data/pmed22.n500p10.txt		right		0s
+../data/pmed23.n500p50.txt		right		0s
+../data/pmed24.n500p100.txt		right		0s
+../data/pmed25.n500p167.txt		right		0s
+../data/pmed26.n600p5.txt		right		0s
+../data/pmed27.n600p10.txt		right		0s
+../data/pmed28.n600p60.txt		right		0s
+../data/pmed29.n600p120.txt		right		0s
+../data/pmed3.n100p10.txt		right		0s
+../data/pmed30.n600p200.txt		right		0s
+../data/pmed31.n700p5.txt		right		0s
+../data/pmed32.n700p10.txt		right		0s
+../data/pmed33.n700p70.txt		right		0s
+../data/pmed34.n700p140.txt		right		0s
+../data/pmed35.n800p5.txt		right		0s
+../data/pmed36.n800p10.txt		right		0s
+../data/pmed37.n800p80.txt		right		0s
+../data/pmed38.n900p5.txt		right		0s
+../data/pmed39.n900p10.txt		right		0s
+../data/pmed4.n100p20.txt		right		0s
+../data/pmed40.n900p90.txt		right		0s
+../data/pmed5.n100p33.txt		right		0s
+../data/pmed6.n200p5.txt		right		0s
+../data/pmed7.n200p10.txt		right		0s
+../data/pmed8.n200p20.txt		right		0s
+../data/pmed9.n200p40.txt		right		0s
+../data/rl1323p100r789.70.txt		right		1s
+../data/rl1323p10r3077.30.txt		right		1s
+../data/rl1323p20r2016.40.txt		wrong		390s
+../data/pmed1.n100p5.txt		right		0s
+../data/pmed10.n200p67.txt		right		0s
+../data/pmed11.n300p5.txt		right		0s
+../data/pmed12.n300p10.txt		right		0s
+../data/pmed13.n300p30.txt		right		0s
+../data/pmed14.n300p60.txt		right		0s
+../data/pmed15.n300p100.txt		right		0s
+../data/pmed16.n400p5.txt		right		0s
+../data/pmed17.n400p10.txt		right		0s
+../data/pmed18.n400p40.txt		right		0s
+../data/pmed19.n400p80.txt		right		1s
+../data/pmed2.n100p10.txt		right		0s
+../data/pmed20.n400p133.txt		right		0s
+../data/pmed21.n500p5.txt		right		0s
+../data/pmed22.n500p10.txt		right		0s
+../data/pmed23.n500p50.txt		right		0s
+../data/pmed24.n500p100.txt		right		0s
+../data/pmed25.n500p167.txt		right		0s
+../data/pmed26.n600p5.txt		right		0s
+../data/pmed27.n600p10.txt		right		0s
+../data/pmed28.n600p60.txt		right		0s
+../data/pmed29.n600p120.txt		right		0s
+../data/pmed3.n100p10.txt		right		0s
+../data/pmed30.n600p200.txt		right		0s
+../data/pmed31.n700p5.txt		right		0s
+../data/pmed32.n700p10.txt		right		0s
+../data/pmed33.n700p70.txt		right		0s
+../data/pmed34.n700p140.txt		right		0s
+../data/pmed35.n800p5.txt		right		0s
+../data/pmed36.n800p10.txt		right		0s
+../data/pmed37.n800p80.txt		right		0s
+../data/pmed38.n900p5.txt		right		0s
+../data/pmed39.n900p10.txt		right		1s
+../data/pmed4.n100p20.txt		right		0s
+../data/pmed40.n900p90.txt		right		0s
+../data/pmed5.n100p33.txt		right		0s
+../data/pmed6.n200p5.txt		right		0s
+../data/pmed7.n200p10.txt		right		0s
+../data/pmed8.n200p20.txt		right		0s
+../data/pmed9.n200p40.txt		right		0s
+../data/rl1323p100r789.70.txt		right		0s
+../data/rl1323p10r3077.30.txt		right		0s
+../data/rl1323p20r2016.40.txt		right		5s
+../data/rl1323p30r1631.50.txt		right		2s
+../data/rl1323p40r1352.36.txt		right		1s
+../data/rl1323p50r1187.27.txt		right		2s
+../data/rl1323p60r1063.01.txt		right		5s
+../data/rl1323p70r971.93.txt		right		15s
+../data/rl1323p80r895.06.txt		right		2s
+../data/rl1323p90r832.00.txt		right		0s
+../data/u1060p100r570.01.txt		right		0s
+../data/u1060p10r2273.08.txt		right		0s
+../data/u1060p110r538.84.txt		right		0s
+../data/u1060p120r510.27.txt		right		0s
+../data/u1060p130r499.65.txt		right		0s
+../data/u1060p140r452.46.txt		right		0s
+../data/u1060p150r447.01.txt		right		0s
+../data/u1060p20r1580.80.txt		wrong		90s		1
+../data/u1060p30r1207.77.txt		right		0s
+../data/u1060p40r1020.56.txt		right		0s
+../data/u1060p50r904.92.txt		right		0s
+../data/u1060p60r781.17.txt		right		0s
+../data/u1060p70r710.75.txt		right		1s
+../data/u1060p80r652.16.txt		right		0s
+../data/u1060p90r607.87.txt		right		0s
+../data/u1817p100r126.99.txt		right		1s
+../data/u1817p10r457.91.txt		wrong		90s		1
+../data/u1817p110r109.25.txt		right		1s
+../data/u1817p120r107.76.txt		right		0s
+../data/u1817p130r104.73.txt		wrong		90s		3
+../data/u1817p140r101.60.txt		right		0s
+../data/u1817p150r91.60.txt		right		0s
+../data/u1817p20r309.01.txt		wrong		90s		3
+../data/u1817p30r240.99.txt		right		7s
+../data/u1817p40r209.45.txt		right		1s
+../data/u1817p50r184.91.txt		wrong		90s		1
+../data/u1817p60r162.64.txt		right		0s
+../data/u1817p70r148.11.txt		right		1s
+../data/u1817p80r136.77.txt		wrong		90s		1
+../data/u1817p90r129.51.txt		right		0s
+
+
+for 3038
+        file_path                       status         time
+../data/pcb3038p100r206.31.txt		wrong		330s		8
+../data/pcb3038p100r206.6.txt		right		302s
+../data/pcb3038p100r206.63.txt		wrong		330s		8
+../data/pcb3038p10r728.54.txt		right		45s
+../data/pcb3038p150r164.40.txt		wrong		330s		15
+../data/pcb3038p150r164.55.txt		wrong		330s		14
+../data/pcb3038p150r164.77.txt		right		8s
+../data/pcb3038p200r140.06.txt		wrong		330s		13
+../data/pcb3038p200r140.09.txt		wrong		330s		4
+../data/pcb3038p200r140.90.txt		right		8s
+../data/pcb3038p20r493.04.txt		wrong		330s		1
+../data/pcb3038p250r122.25.txt		wrong		330s		9

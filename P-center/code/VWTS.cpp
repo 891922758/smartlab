@@ -7,8 +7,9 @@
 #include"MY_SET"
 // #define debug_flag
 // #define show_delta
-#define watch_mode
-#define show_time
+#define test_mode
+// #define watch_mode
+// #define show_time
 #define inf 1000000007
 #define BIT_WIDTH 30
 #define ll long long
@@ -29,6 +30,10 @@ int t0;
 // for input
 int n,p;
 int time_limit,seed=time(0);
+#ifdef test_mode
+    char test_result[]="result.txt";
+    FILE* result_fp=fopen(test_result,"a");
+#endif
 
 #ifdef show_delta
     void print_delta()
@@ -41,6 +46,15 @@ int time_limit,seed=time(0);
                 cerr<<"c "<<i<<": "<<delta[i]<<endl;
             else
                 cerr<<"  "<<i<<": "<<delta[i]<<endl;
+        }
+        return ;
+    }
+    void print_weight()
+    {
+        cerr<<"----------weight table----------"<<endl;
+        for(int i=1;i<=n;i++)
+        {
+            cerr<<"\t"<<i<<": "<<weight[i]<<endl;
         }
         return ;
     }
@@ -57,12 +71,21 @@ void read(int argc,char** argv)
     }
     else
     {
-        freopen(argv[1],"r",stdin);
-        freopen(argv[2],"w",stdout);
-        sscanf(argv[3],"%d",&time_limit);
-        sscanf(argv[4],"%d",&seed);
+        #ifndef test_mode
+            freopen(argv[1],"r",stdin);
+            freopen(argv[2],"w",stdout);
+            sscanf(argv[3],"%d",&time_limit);
+            sscanf(argv[4],"%d",&seed);
+        #endif
+        #ifdef test_mode
+            // cerr<<argv[1]<<endl;
+            freopen(argv[1],"r",stdin);
+        #endif
     }
 
+    #ifdef test_mode
+        fprintf(result_fp,"%s\t\t",argv[1]);
+    #endif
     scanf("%d%d",&n,&p);
 
     for(int i=1;i<=n;i++)
@@ -201,7 +224,7 @@ void greedy_init()
     }
 
     #ifdef show_time
-        cerr<<"time for greedy_init loop: "<<time(0)-t1<<"s"<<endl;
+        // cerr<<"time for greedy_init loop: "<<time(0)-t1<<"s"<<endl;
     #endif
 
 }
@@ -237,13 +260,14 @@ void init_delta()
     }
     #ifdef show_delta
         print_delta();
+        print_weight();
     #endif
 }
 
 bool can_stop_VWTS()
 {
     if(U.size==0) return true;
-    if(time(0)-t0>=9*60+50) return true;
+    if(time(0)-t0>=5*60+30) return true;
     return false;
 }
 
@@ -273,10 +297,13 @@ ll try_to_open(int new_center)
     #ifdef watch_mode
         if(benefit!=delta[new_center])
         {
-            debug(V[new_center][0]);
-            debug(benefit);
-            debug(delta[new_center]);
-            cerr<<"Error! Benefit is not equal to delta!\n";
+            // debug(V[new_center][0]);
+            // debug(benefit);
+            // debug(delta[new_center]);
+            // cerr<<"Error! Benefit is not equal to delta!\n";
+            #ifdef show_delta
+                print_delta();
+            #endif
         }
     #endif
 
@@ -444,12 +471,28 @@ void do_swap(int u,int v)
     X.erase(v);
     is_center[u]=true;
     X.insert(u);
+    #ifdef watch_mode
+        // debug(X.size);
+        if(u==v)
+            cerr<<"Warning!new center is equal to old center!\n";
+    #endif
     merge_influence(u,v);
     return ;
 }
 
 void increase_weight()
 {
+    #ifdef debug_flag
+        // cerr<<"increasing weight!\n";
+        int delta_[maxn];
+        for(int i=1;i<=n;i++)
+            delta_[i]=delta[i];
+    #endif
+
+    #ifdef watch_mode
+        int cnt=0;
+    #endif
+
     for(int i=1;i<=n;i++)
         if(covered[i]->size==0)
         {
@@ -458,20 +501,39 @@ void increase_weight()
             {
                 int id=C[i][j];
                 #ifdef watch_mode
+                    cnt++;
                     if(is_center[id])
+                    {
                         cerr<<"Error! Some center doesn't cover the point it should do!\n";
                         return ;
+                    }
                 #endif
                 delta[id]++;
-                memset(delta,0,sizeof(delta));
-                init_delta();
             }
         }
+    
+    #ifdef debug_flag
+        memset(delta,0,sizeof(delta));
+        init_delta();
+        for(int i=1;i<=n;i++)
+            if(delta_[i]!=delta[i])
+            {
+                cerr<<"----------diff increment update & whole update----------"<<endl;
+                cerr<<"\t  "<<i<<": "<<delta_[i]<<"  "<<delta[i]<<endl;
+            }
+
+        if(cnt!=U.size)
+            cerr<<"Error! cnt is not equal to U.size!"<<endl;
+    #endif
+
     return ;
 }
 
 void VWTS()
 {
+    #ifdef watch_mode
+        cerr<<"using VWTS\n";
+    #endif
     f=calc_f();
     int u,v;
     ll decrement;
@@ -486,19 +548,44 @@ void VWTS()
         if(decrement>=0) increase_weight();
 
         #ifdef watch_mode
-            debug(U.size);
+            // cerr<<"in VWTS"<<endl;
+            // debug(U.size);
         #endif
     }
     return ;
 }
 
+bool check()
+{
+    MY_SET checker(n);
+    int cnt=0;
+    for(int i=1;i<=n;i++)
+        if(is_center[i])
+        {
+            cnt++;
+            for(int j=1;j<=V[i][0];j++)
+            {
+                checker.insert(V[i][j]);
+            }
+        }
+    return checker.size==n;
+}
+
 void print_result()
 {
-    for(int i=1;i<=n;i++)
-    {
-        if(is_center[i]) printf("%d ",i);
-    }
-    putchar('\n');
+    #ifndef test_mode
+        for(int i=1;i<=n;i++)
+        {
+            if(is_center[i]) printf("%d ",i);
+        }
+        putchar('\n');
+    #endif
+
+    #ifdef test_mode
+        if(check()) fprintf(result_fp,"right\t\t%lds\n",time(0)-t0);
+        else fprintf(result_fp,"wrong\t\t%lds\t\t%d\n",time(0)-t0,U.size);
+        fclose(result_fp);
+    #endif
 
     #ifdef show_time
         cerr<<"time: "<<time(0)-t0<<"s"<<endl;
@@ -526,16 +613,117 @@ int main(int argc,char**argv)
     VWTS();
     print_result();
     release_memory();
+    #ifdef watch_mode
+        if(check()) cerr<<"right!\n";
+        else cerr<<"wrong!\n";
+    #endif
     return 0;
 }
 
 /*
 ../data/1simple.txt
-../data/u1817p150r91.60.txt
-../data/u1817p140r101.60.txt
-../data/u1817p130r104.73.txt
-../data/u1817p10r457.91.txt
+../data/pcb3038p100r206.31.txt
+../data/pcb3038p100r206.6.txt
+../data/pcb3038p100r206.63.txt
+../data/pcb3038p10r728.54.txt
+../data/pcb3038p150r164.40.txt
+../data/pcb3038p150r164.55.txt
+../data/pcb3038p150r164.77.txt
+../data/pcb3038p200r140.06.txt
+../data/pcb3038p200r140.09.txt
+../data/pcb3038p200r140.90.txt
+../data/pcb3038p20r493.04.txt
+../data/pcb3038p250r122.25.txt
+../data/pcb3038p300r115.00.txt
+../data/pcb3038p30r393.50.txt
+../data/pcb3038p350r104.68.txt
+../data/pcb3038p400r96.88.txt
+../data/pcb3038p40r336.42.txt
+../data/pcb3038p450r88.55.txt
+../data/pcb3038p500r84.58.txt
+../data/pcb3038p50r297.83.txt
+../data/pcb3038p50r298.04.txt
+../data/pcb3038p50r298.10.txt
+../data/pmed1.n100p5.txt
+../data/pmed10.n200p67.txt
+../data/pmed11.n300p5.txt
+../data/pmed12.n300p10.txt
+../data/pmed13.n300p30.txt
+../data/pmed14.n300p60.txt
+../data/pmed15.n300p100.txt
+../data/pmed16.n400p5.txt
+../data/pmed17.n400p10.txt
+../data/pmed18.n400p40.txt
+../data/pmed19.n400p80.txt
+../data/pmed2.n100p10.txt
+../data/pmed20.n400p133.txt
+../data/pmed21.n500p5.txt
+../data/pmed22.n500p10.txt
+../data/pmed23.n500p50.txt
+../data/pmed24.n500p100.txt
+../data/pmed25.n500p167.txt
+../data/pmed26.n600p5.txt
+../data/pmed27.n600p10.txt
+../data/pmed28.n600p60.txt
+../data/pmed29.n600p120.txt
+../data/pmed3.n100p10.txt
+../data/pmed30.n600p200.txt
+../data/pmed31.n700p5.txt
+../data/pmed32.n700p10.txt
+../data/pmed33.n700p70.txt
+../data/pmed34.n700p140.txt
+../data/pmed35.n800p5.txt
+../data/pmed36.n800p10.txt
+../data/pmed37.n800p80.txt
+../data/pmed38.n900p5.txt
+../data/pmed39.n900p10.txt
+../data/pmed4.n100p20.txt
+../data/pmed40.n900p90.txt
+../data/pmed5.n100p33.txt
+../data/pmed6.n200p5.txt
+../data/pmed7.n200p10.txt
+../data/pmed8.n200p20.txt
+../data/pmed9.n200p40.txt
+../data/rl1323p100r789.70.txt
+../data/rl1323p10r3077.30.txt
+../data/rl1323p20r2016.40.txt
+../data/rl1323p30r1631.50.txt
+../data/rl1323p40r1352.36.txt
+../data/rl1323p50r1187.27.txt
+../data/rl1323p60r1063.01.txt
+../data/rl1323p70r971.93.txt
+../data/rl1323p80r895.06.txt
+../data/rl1323p90r832.00.txt
+../data/u1060p100r570.01.txt
+../data/u1060p10r2273.08.txt
+../data/u1060p110r538.84.txt
+../data/u1060p120r510.27.txt
+../data/u1060p130r499.65.txt
+../data/u1060p140r452.46.txt
 ../data/u1060p150r447.01.txt
+../data/u1060p20r1580.80.txt
+../data/u1060p30r1207.77.txt
+../data/u1060p40r1020.56.txt
+../data/u1060p50r904.92.txt
+../data/u1060p60r781.17.txt
+../data/u1060p70r710.75.txt
+../data/u1060p80r652.16.txt
+../data/u1060p90r607.87.txt
+../data/u1817p100r126.99.txt    
+../data/u1817p10r457.91.txt     
+../data/u1817p110r109.25.txt    1
+../data/u1817p120r107.76.txt    0
+../data/u1817p130r104.73.txt    11
+../data/u1817p140r101.60.txt    4
+../data/u1817p150r91.60.txt     2
+../data/u1817p20r309.01.txt
+../data/u1817p30r240.99.txt     
+../data/u1817p40r209.45.txt     3
+../data/u1817p50r184.91.txt     1
+../data/u1817p60r162.64.txt     2
+../data/u1817p70r148.11.txt     0
+../data/u1817p80r136.77.txt     10
+../data/u1817p90r129.51.txt     1
 */
 
 /* template for looping a MY_SET
@@ -571,3 +759,13 @@ for(int int_offset=0;int_offset<(C[picked]->volume)/BIT_WIDTH+1;int_offset++)
 // debug(new_set->get_the_kth(3));
 // debug(new_set->get_the_kth(4));
 // greedy_init();
+
+// is_center[1]=is_center[4]=1;
+// X.insert(1);
+// X.insert(4);
+// covered[1]->insert(1);
+// covered[4]->insert(1);
+// covered[1]->insert(4);
+// covered[4]->insert(4);
+// U.erase(1);
+// U.erase(4);
