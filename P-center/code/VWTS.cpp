@@ -19,6 +19,7 @@ using namespace std;
 
 const int maxn=3e3+50;
 MY_SET U(maxn),X(maxn);
+MY_SET X_best(maxn);
 int C[maxn][maxn],V[maxn][maxn];
 bool is_center[maxn];
 MY_SET *covered[maxn];
@@ -27,9 +28,10 @@ ll weight[maxn];
 ll f,best_f;
 int last_new,last_old;
 int t0;
+int least_uncovered;
 // for input
 int n,p;
-int time_limit,seed=time(0);
+int time_limit=60*0+30,seed=time(0);
 #ifdef test_mode
     char test_result[]="result.txt";
     FILE* result_fp=fopen(test_result,"a");
@@ -78,8 +80,10 @@ void read(int argc,char** argv)
             sscanf(argv[4],"%d",&seed);
         #endif
         #ifdef test_mode
-            // cerr<<argv[1]<<endl;
             freopen(argv[1],"r",stdin);
+            freopen(argv[2],"w",stdout);
+            sscanf(argv[3],"%d",&time_limit);
+            sscanf(argv[4],"%d",&seed);
         #endif
     }
 
@@ -94,7 +98,6 @@ void read(int argc,char** argv)
         covered[i]=new MY_SET(n);
         weight[i]=1;
     }
-
     for(int i=1,x;i<=n;i++)
     {
         int num;
@@ -108,7 +111,6 @@ void read(int argc,char** argv)
             C[x][++C[x][0]]=i;
         }
     }
-
     return ;
 }
 
@@ -267,7 +269,7 @@ void init_delta()
 bool can_stop_VWTS()
 {
     if(U.size==0) return true;
-    if(time(0)-t0>=5*60+30) return true;
+    if(time(0)-t0>=time_limit) return true;
     return false;
 }
 
@@ -300,7 +302,7 @@ ll try_to_open(int new_center)
             // debug(V[new_center][0]);
             // debug(benefit);
             // debug(delta[new_center]);
-            // cerr<<"Error! Benefit is not equal to delta!\n";
+            cerr<<"Error! Benefit is not equal to delta!\n";
             #ifdef show_delta
                 print_delta();
             #endif
@@ -321,7 +323,7 @@ void restore_backup()
     return ;
 }
 
-void find_best_pair(int& u, int& v,ll& swap_val)
+void find_best_pair(int& u, int& v)
 {
     int left=U.size;
     int picked=U.get_the_kth(rand()%left+1);
@@ -333,6 +335,8 @@ void find_best_pair(int& u, int& v,ll& swap_val)
     for(int i=1;i<=C[picked][0];i++)
     {
         int new_center=C[picked][i];
+        if(new_center==last_new||new_center==last_old)
+            continue;
 
         #ifdef watch_mode
             if(is_center[new_center])
@@ -368,7 +372,7 @@ void find_best_pair(int& u, int& v,ll& swap_val)
                         debug(id);
                     #endif
 
-                    if(new_center==last_old&&id==last_new) continue;
+                    if(id==last_new||id==last_old) continue;
                     if(delta[id]-benefit<best_swap_val)
                     {
                         best_swap_val=delta[id]-benefit;
@@ -392,7 +396,6 @@ void find_best_pair(int& u, int& v,ll& swap_val)
     }
     last_new=u;
     last_old=v;
-    swap_val=best_swap_val;
     return ;
 }
 
@@ -490,6 +493,7 @@ void increase_weight()
     #endif
 
     #ifdef watch_mode
+        // cerr<<"increasing!\n";
         int cnt=0;
     #endif
 
@@ -497,11 +501,19 @@ void increase_weight()
         if(covered[i]->size==0)
         {
             weight[i]++;
+            #ifdef watch_mode
+                cnt++;
+            #endif
             for(int j=1;j<=C[i][0];j++)
             {
                 int id=C[i][j];
                 #ifdef watch_mode
-                    cnt++;
+                    // cerr<<id<<"  ";
+                    if(weight[i]<0)
+                    {
+                        cerr<<"Error! Weight overflows!\n";
+                        return ;
+                    }
                     if(is_center[id])
                     {
                         cerr<<"Error! Some center doesn't cover the point it should do!\n";
@@ -511,7 +523,11 @@ void increase_weight()
                 delta[id]++;
             }
         }
-    
+
+    #ifdef watch_mode
+        // debug(cnt);
+    #endif
+
     #ifdef debug_flag
         memset(delta,0,sizeof(delta));
         init_delta();
@@ -536,20 +552,36 @@ void VWTS()
     #endif
     f=calc_f();
     int u,v;
-    ll decrement;
+    X_best=X;
+    int last_U_size=U.size;
+    least_uncovered=U.size;
     while(!can_stop_VWTS())
     {
         #ifdef debug_flag
           debug("hello");
         #endif
 
-        find_best_pair(u,v,decrement);
+        find_best_pair(u,v);
         do_swap(u,v);
-        if(decrement>=0) increase_weight();
+        if(U.size<least_uncovered)
+        {
+            X_best=X;
+            least_uncovered=U.size;
+        }
+        else if(U.size>=last_U_size) increase_weight();
+        last_U_size=U.size;
 
         #ifdef watch_mode
             // cerr<<"in VWTS"<<endl;
             // debug(U.size);
+            // cerr<<"\n";
+            // debug(U.the_one);
+            // debug(weight[U.the_one]);
+            // if(U.the_one!=-1)
+            // for(int i=1;i<=n;i++)
+            //     if(weight[i]>weight[U.the_one])
+            //         cerr<<i<<"has larger weight "<<weight[i]<<" than "<<weight[U.the_one]<<endl;
+            debug(least_uncovered);
         #endif
     }
     return ;
@@ -558,32 +590,55 @@ void VWTS()
 bool check()
 {
     MY_SET checker(n);
-    int cnt=0;
-    for(int i=1;i<=n;i++)
-        if(is_center[i])
+    for(int int_offset=0;int_offset<(X_best.volume)/BIT_WIDTH+1;int_offset++)
+    {
+        if(!(X_best.bit[int_offset]))
         {
-            cnt++;
-            for(int j=1;j<=V[i][0];j++)
+            continue;
+        }
+        for(int bit_offset=0;bit_offset<BIT_WIDTH;bit_offset++)
+        {
+            if((1<<bit_offset)>X_best.bit[int_offset]) break;
+            if((1<<bit_offset)&(X_best.bit[int_offset]))
             {
-                checker.insert(V[i][j]);
+                int id=calc_id(int_offset,bit_offset);
+                for(int j=1;j<=V[id][0];j++)
+                {
+                    checker.insert(V[id][j]);
+                }
             }
         }
+    }
+    #ifdef watch_mode
+        cerr<<"Uncovered: "<<n-checker.size<<endl;
+    #endif
     return checker.size==n;
 }
 
 void print_result()
 {
-    #ifndef test_mode
-        for(int i=1;i<=n;i++)
+    #ifdef test_mode
+        for(int int_offset=0;int_offset<(X_best.volume)/BIT_WIDTH+1;int_offset++)
         {
-            if(is_center[i]) printf("%d ",i);
+            if(!(X_best.bit[int_offset]))
+            {
+                continue;
+            }
+            for(int bit_offset=0;bit_offset<BIT_WIDTH;bit_offset++)
+            {
+                if((1<<bit_offset)>X_best.bit[int_offset]) break;
+                if((1<<bit_offset)&(X_best.bit[int_offset]))
+                {
+                    printf("%d ",calc_id(int_offset,bit_offset));
+                }
+            }
         }
         putchar('\n');
     #endif
 
     #ifdef test_mode
         if(check()) fprintf(result_fp,"right\t\t%lds\n",time(0)-t0);
-        else fprintf(result_fp,"wrong\t\t%lds\t\t%d\n",time(0)-t0,U.size);
+        else fprintf(result_fp,"wrong\t\t%lds\t\t%d\n",time(0)-t0,least_uncovered);
         fclose(result_fp);
     #endif
 
@@ -616,6 +671,7 @@ int main(int argc,char**argv)
     #ifdef watch_mode
         if(check()) cerr<<"right!\n";
         else cerr<<"wrong!\n";
+        cerr<<time(0)-t0<<"s"<<endl;
     #endif
     return 0;
 }
